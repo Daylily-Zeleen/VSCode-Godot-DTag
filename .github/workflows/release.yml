@@ -1,0 +1,84 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Verify version match
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "❌ Tag version ($TAG_VERSION) does not match package.json version ($PKG_VERSION)"
+            exit 1
+          fi
+          echo "✅ Tag version ($TAG_VERSION) matches package.json version ($PKG_VERSION)"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile TypeScript
+        run: npx tsc -p tsconfig.json
+
+      - name: Package VSIX
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          npx vsce package -o "vscode-godot-dtag-${VERSION}.vsix"
+          echo "VSIX_FILE=vscode-godot-dtag-${VERSION}.vsix" >> "$GITHUB_ENV"
+
+      - name: Generate release notes
+        id: changelog
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          PREVIOUS_TAG="$(git tag --sort=-creatortimestamp | grep -v '^$' | sed -n '2p' || true)"
+
+          cat << 'INIT' > release-notes.md
+          ## VSIX 手动安装
+
+          1. 下载本 Release 附件中的 `.vsix` 文件
+          2. 打开 VS Code，按 `Ctrl+Shift+P`
+          3. 选择 **Extensions: Install from VSIX...**
+          4. 选择下载的 `.vsix` 文件
+
+          ---
+
+          ## 更新内容
+          INIT
+
+          if [ -z "$PREVIOUS_TAG" ]; then
+            echo "- 🎉 初始发布" >> release-notes.md
+          else
+            git log --pretty=format:"- %s (%h)" "$PREVIOUS_TAG..HEAD" >> release-notes.md
+          fi
+
+          echo "" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "---" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "**完整提交历史**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...$TAG" >> release-notes.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.VSIX_FILE }}
+          body_path: release-notes.md
+          name: DTag ${{ github.ref_name }}
+          draft: false
+          prerelease: false

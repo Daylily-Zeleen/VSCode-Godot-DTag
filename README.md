@@ -63,6 +63,25 @@
    - 输入并选择 **Extensions: Install from VSIX...**
    - 选择刚才生成的 `.vsix` 文件即可完成安装
 
+## 自动发布
+
+本项目配置了 GitHub Actions 工作流（`.github/workflows/release.yml`），当推送符合 `v*` 格式的 Git Tag 时，会自动执行以下操作：
+
+1. **编译 TypeScript** 源码
+2. **打包** 生成 `.vsix` 文件
+3. **生成 Release 说明** — 自动汇总距离上一个 Tag 以来的所有提交记录
+4. **创建 GitHub Release** — 附带生成的 `.vsix` 附件，供用户手动下载安装
+
+### 触发自动发布
+
+```bash
+# 创建新版本 Tag 并推送
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+随后在 [GitHub Releases 页面](https://github.com/Daylily-Zeleen/VSCode-Godot-DTag/releases) 即可看到自动生成的 Release 及相关 `.vsix` 附件。
+
 ## AI 生成内容声明
 
 本项目的部分代码（包括但不限于语法高亮规则、解析器、诊断逻辑等）由 AI 辅助生成。AI 生成内容可能包含潜在错误或不符合最佳实践的实现，请在使用前进行审阅和测试。如有任何问题或改进建议，欢迎提交 Issue 或 Pull Request。
