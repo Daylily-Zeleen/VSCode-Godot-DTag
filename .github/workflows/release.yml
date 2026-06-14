@@ -79,6 +79,6 @@ jobs:
         with:
           files: ${{ env.VSIX_FILE }}
           body_path: release-notes.md
-          name: DTag ${{ github.ref_name }}
+          name: VSCode-Godot-DTag ${{ github.ref_name }}
           draft: false
           prerelease: false
