@@ -1,0 +1,44 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "DTag",
+	"scopeName": "source.dtag",
+	"patterns": [
+		{
+			"include": "#doc_comment"
+		},
+		{
+			"include": "#comment"
+		},
+		{
+			"include": "#redirect"
+		},
+		{
+			"include": "#domain"
+		},
+		{
+			"include": "#tag"
+		}
+	],
+	"repository": {
+		"doc_comment": {
+			"name": "comment.block.documentation.dtag",
+			"match": "##.*$"
+		},
+		"comment": {
+			"name": "comment.line.number-sign.dtag",
+			"match": "(?<!#)##.*$|(?<!#)#(?!#).*$"
+		},
+		"redirect": {
+			"name": "keyword.control.redirect.dtag",
+			"match": "\\->[\\t ]*[a-zA-Z_]\\w*(\\.[a-zA-Z_]\\w*)*"
+		},
+		"domain": {
+			"name": "entity.name.type.domain.dtag",
+			"match": "(?<=^|\\t)@[a-zA-Z_]\\w*"
+		},
+		"tag": {
+			"name": "variable.other.tag.dtag",
+			"match": "(?<=^|\\t)[a-zA-Z_]\\w*(?=\\s|$|#|\\->)"
+		}
+	}
+}
