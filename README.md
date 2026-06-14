@@ -25,6 +25,17 @@
 
 ## 安装方式
 
+从 [GitHub Releases 页面](https://github.com/Daylily-Zeleen/VSCode-Godot-DTag/releases) 下载最新版本的 `.vsix` 文件，然后：
+
+1. 打开 VS Code
+2. 按 `Ctrl+Shift+P` 打开命令面板
+3. 选择 **Extensions: Install from VSIX...**
+4. 选择下载的 `.vsix` 文件
+
+---
+
+以下为面向**开发者或贡献者**的安装方式。
+
 ### 开发模式（用于调试）
 
 1. **安装依赖并编译**
@@ -42,7 +53,7 @@
    npm run watch
    ```
 
-### 打包安装（VSIX）
+### 自行打包（VSIX）
 
 1. **确保已安装打包工具**
    ```bash
@@ -55,13 +66,13 @@
    npx tsc -p tsconfig.json
    vsce package
    ```
-   执行后将在项目根目录生成 `vscode-godot-dtag-1.0.0.vsix` 文件。
+   执行后将在项目根目录生成 `vscode-godot-dtag-*.vsix` 文件。
 
 3. **安装 VSIX**
    - 打开 VS Code
    - 按 `Ctrl+Shift+P` 打开命令面板
    - 输入并选择 **Extensions: Install from VSIX...**
-   - 选择刚才生成的 `.vsix` 文件即可完成安装
+   - 选择刚才生成的 `.vsix` 文件
 
 ## 自动发布
 
